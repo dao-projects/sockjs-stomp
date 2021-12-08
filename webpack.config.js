@@ -5,7 +5,7 @@ module.exports = {
   output: {
     filename: "./index.js",
     libraryTarget: "umd",
-    library: "SockjsStomp",
+    library: "SockJsStomp",
     libraryExport: "default", // 增加这个属性
     path: path.resolve(__dirname, "lib"),
   },
