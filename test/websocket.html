@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>SockJS</title>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+<script>
+    let timer;
+    function connect() {
+        var url = "http://172.16.5.205:8080/dp/ws/server";
+        var socket = new SockJS(url);
+        var headers = {
+            "Authorization": "a84d54693fe2440c82986715baac63234ffe303ed08c4c3886dadb1cef2c2200",
+            "areaId":"510811000000"
+        }
+        stompClient = Stomp.over(socket);
+        stompClient.heartbeat.outgoing = 1000; //若使用STOMP 1.1 版本，默认开启了心跳检测机制（默认值都是10000ms）
+        stompClient.heartbeat.incoming = 1000; //客户端不从服务端接收心跳包  0 | 1
+        stompClient.connect(headers, function (frame) {
+            console.log('Connected: ' + frame);
+            // stompClient.subscribe('/topic/farmingevent', function (greeting) {
+            // });
+            // stompClient.subscribe('/topic/equipment/status', function (greeting) {
+            // });
+            // stompClient.subscribe('/topic/meteor/latest', function (greeting) {
+            // });
+            // stompClient.subscribe('/topic/soil/latest', function (greeting) {
+            // });
+            // stompClient.subscribe('/topic/tasklog', function (greeting) {
+            // });
+            stompClient.subscribe('/topic/zhaohua/notify', function (greeting) {
+            });
+            stompClient.subscribe('/topic/chaotian/notify', function (greeting) {
+            });
+
+
+        },function(){
+              console.log("[errorCallback]=>连接失败....");
+                //连接失败时的回调函数，此函数重新调用连接方法，形成循环，直到连接成功
+                if (timer) {
+                  clearTimeout(timer);
+                  timer = null;
+                }
+                timer = setTimeout(() => {
+                  connect();
+                }, 3000);
+        });
+    }
+    connect();
+
+</script>
+</body>
+</html>
